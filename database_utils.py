@@ -1,6 +1,7 @@
 import sqlite3, os
 from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
 from dotenv import load_dotenv
+from contextlib import contextmanager
 
 load_dotenv(dotenv_path="/storage/emulated/0/pcparts/.env")
 
@@ -8,9 +9,19 @@ tables = ["cpu", "gpu", "mobo", "psu", "ram", "case", "mouse", "keyboard", "moni
 
 def get_database_path() -> str:
     database_path = os.getenv("DataBase")
+    if not database_path:
+        print("No database path found")
     return database_path
 
+@contextmanager
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(2), retry=retry_if_exception_type(sqlite3.OperationalError))
-def database_connection(database_path):
+def database_connection(database_path: str):
     connection = sqlite3.connect(database_path)
-    return connection
+    try:
+        yield connection
+    except sqlite3.Error as e:
+        print(f"Sqlite3 Error: {e}.")
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        connection.close()

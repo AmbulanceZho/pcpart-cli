@@ -1,9 +1,12 @@
 import input_utils, database_utils
-
+actions = ["enter", "read", "update", "exit"]
 def main():
     run = True
     while run:
-        action = input("What are you doing?: | [Enter, Read, Update, Exit] | ").strip().lower()
+        print("Welcome to pcparts database user interface! available actions: ")
+        for act in actions:
+            print(f"-> {act}")
+        action = input("Choose an action: ").strip().lower()
         
         if action == "enter":
             input_utils.get_part_type()
