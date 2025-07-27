@@ -5,7 +5,7 @@ from contextlib import contextmanager
 
 load_dotenv(dotenv_path="/storage/emulated/0/pcparts/.env")
 
-tables = ["cpu", "gpu", "mobo", "psu", "ram", "case", "mouse", "keyboard", "monitor", "headset", "laptop", "m.2", "hdd", "sata_ssd", "mouse_pad"] # add support for more parts later
+tables = ["cpu", "gpu", "mobo", "psu", "ram", "pc_case", "mouse", "keyboard", "monitor", "headset", "laptop", "m2", "hdd", "sata_ssd", "mouse_pad"] # add support for more parts later
 
 def get_database_path() -> str:
     database_path = os.getenv("DataBase")
@@ -27,3 +27,22 @@ def database_connection(database_path: str) -> sqlite3.Connection:
         print(f"Error: {e}")
     finally:
         connection.close()
+
+def create_tables_if_not_exist(table_specs: dict) -> None:
+        with database_connection(get_database_path()) as db:
+            try:
+                cursor = db.cursor()
+                for table, columns in table_specs.items():
+                    clean_columns = [col for col in columns if col]
+                    sql_columns = ", ".join([f"{col} TEXT" for col in clean_columns])
+                    sql = f"""
+                    CREATE TABLE IF NOT EXISTS {table} (
+                        model TEXT PRIMARY KEY,
+                        {sql_columns}
+                    );
+                """
+                    cursor.execute(sql)
+                    print(sql)
+                db.commit()
+            except Exception as e:
+                print(f"Error: {e}")

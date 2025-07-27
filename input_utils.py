@@ -1,53 +1,46 @@
-from database_utils import get_database_path, database_connection
-import sqlite3, database_utils, part_utils
+from database_utils import get_database_path, database_connection, tables
+import sqlite3, part_utils
 
-actions = ["enter", "read", "update", "exit"]
-
-def available_parts():
-    parts = part_utils.part_types
-    for part in parts:
-        print(f"-> {part}")
+actions = ["enter", "read", "exit"] #read is just for testing the enter action, this interface is for my eyes and use only. 
 
 def get_part_type():
     print("Parts: ")
-    for part in database_utils.tables:
+    for part in tables:
         print(f" -> {part}")
     part_type = input("What part are you entering specs for: ").strip().lower()
     try:
         if part_type == "cpu":
             part_utils.cpu()
         elif part_type == "gpu":
-            pass
+            part_utils.gpu()
         elif part_type == "mobo":
-            pass
+            pass # fill in the rest of the logic later
     except sqlite3.Error as e:
         print(f"sqlite3 Error: {e}")
     except Exception as e:
         print(f"Error: {e}")
 
-def enter():
-    pass
-
-def update():
-    pass
-
 def read(part_type: str = "", part_name: str = "") -> None:
     with database_connection(get_database_path()) as database:
     
-        if part_type not in database_utils.tables:
+        if part_type not in tables:
             print(f"Part | \"{part_type}\" | is invalid.")
-            available_parts()
         
-        query = f"SELECT * FROM {part_type} WHERE name = ?"
+        query = f"SELECT * FROM {part_type} WHERE name LIKE ?"
         try:
-            database_cursor = database.execute(query, (part_name,))
+            database_cursor = database.execute(query, (f"%{part_name}%",))
             result = database_cursor.fetchall()
             
             if not result:
                 print(f"No matching part found for: | \"{part_name}\" | .")
             else:
+                columns = [desc[0] for desc in database_cursor.description]
                 for row in result:
-                    print(f"{row}\n")
+                    print("─" * 40)
+                    for col, val in zip(columns, row):
+                        print(f"{col:<15}: {val}")
+                    print("─" * 40)
+                
         except sqlite3.Error as e:
             print(f"Sqlite3 Error: {e}")
         except Exception as e:

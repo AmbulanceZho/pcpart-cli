@@ -1,4 +1,5 @@
 import input_utils, database_utils
+from database_extension import table_specs
 
 def main():
     run = True
@@ -19,9 +20,6 @@ def main():
                 part_type = input(f"Enter part type: ").strip().lower()
                 part_name = input("Enter part name: ").strip().lower()
                 input_utils.read(part_type, part_name)
-        
-            elif action == "update":
-                pass
             
             elif action == "exit":
                 run = False
@@ -33,4 +31,5 @@ def main():
             print(f"Error: {e}")
 
 if __name__ == '__main__':
+    database_utils.create_tables_if_not_exist(table_specs=table_specs)
     main()
