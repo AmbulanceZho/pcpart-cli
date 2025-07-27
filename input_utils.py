@@ -1,7 +1,12 @@
 from database_utils import get_database_path, database_connection
 import sqlite3, database_utils, part_utils
 
-# Actions = Enter, Update, Read, Exit
+actions = ["enter", "read", "update", "exit"]
+
+def available_parts():
+    parts = part_utils.part_types
+    for part in parts:
+        print(f"-> {part}")
 
 def get_part_type():
     print("Parts: ")
@@ -10,7 +15,7 @@ def get_part_type():
     part_type = input("What part are you entering specs for: ").strip().lower()
     try:
         if part_type == "cpu":
-            pass
+            part_utils.cpu()
         elif part_type == "gpu":
             pass
         elif part_type == "mobo":
@@ -26,12 +31,12 @@ def enter():
 def update():
     pass
 
-def read(part_type: str = "", part_name: str = ""):
+def read(part_type: str = "", part_name: str = "") -> None:
     with database_connection(get_database_path()) as database:
     
         if part_type not in database_utils.tables:
             print(f"Part | \"{part_type}\" | is invalid.")
-            return
+            available_parts()
         
         query = f"SELECT * FROM {part_type} WHERE name = ?"
         try:

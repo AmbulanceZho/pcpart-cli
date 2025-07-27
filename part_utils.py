@@ -1,9 +1,17 @@
 import database_utils
+from database_utils import get_database_path, database_connection
 
-# part types = cpu, gpu, mobo, psu, ram, psu, case, mouse, keyboard, monitor, headset, laptop, m.2 nvme/sata ssd, hdd, sata ssd, mouse pad.
+part_types = database_utils.tables
+cpu_specs = ["brand", "name", "clock", "boost_clock", "core_count", "thread_count", "TDP", "socket"]
 
-def cpu(brand: str = "", name: str = "", clock: float = .0, boost_clock: float = .0, core_count: int = 0, thread_count: int = 0, TPD: int = 0, socket: str = ""):
-    pass
+def cpu():
+    
+    with database_connection(get_database_path()) as database:
+        for spec in cpu_specs:
+            get_spec = input(f"Enter spec for {spec}: ")
+            pass
+            
+        
     
 def gpu():
     pass

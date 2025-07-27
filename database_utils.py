@@ -9,13 +9,15 @@ tables = ["cpu", "gpu", "mobo", "psu", "ram", "case", "mouse", "keyboard", "moni
 
 def get_database_path() -> str:
     database_path = os.getenv("DataBase")
-    if not database_path:
-        print("No database path found")
+    
+    if not os.path.exists(database_path):
+        raise FileNotFoundError(f"Database not found at {database_path}")
+    
     return database_path
 
 @contextmanager
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(2), retry=retry_if_exception_type(sqlite3.OperationalError))
-def database_connection(database_path: str):
+def database_connection(database_path: str) -> sqlite3.Connection:
     connection = sqlite3.connect(database_path)
     try:
         yield connection
