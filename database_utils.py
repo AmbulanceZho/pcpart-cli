@@ -1,7 +1,10 @@
 import sqlite3, os
-from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
+from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type #Mobil friendliness and discord.py friendly
 from dotenv import load_dotenv
-from contextlib import contextmanager
+from contextlib import contextmanager #discord.py async/await friendly using 'with'
+
+#TODO add function that updates tables dynamically to insert more columns in future and a second sub command to update old entries with NULL in newly added fields
+
 
 load_dotenv(dotenv_path="/storage/emulated/0/pcparts/.env")
 
@@ -22,9 +25,9 @@ def database_connection(database_path: str) -> sqlite3.Connection:
     try:
         yield connection
     except sqlite3.Error as e:
-        print(f"Sqlite3 Error: {e}.")
+        print(f"Unexpected Sqlite3 Error: {e}.")
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Unexpected Error: {e}")
     finally:
         connection.close()
 
@@ -54,5 +57,7 @@ def create_tables_if_not_exist(table_specs: dict) -> None:
                 database_cursor.execute(sql)
                 print(sql)
             database.commit()
+        except sqlite3.Error as e:
+            print(f"Unexpected Sqlite3 Error: {e}")
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Unexpected Error: {e}")

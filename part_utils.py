@@ -1,25 +1,8 @@
 import sqlite3
 from database_utils import get_database_path, database_connection
-from spec_utils import *
+from spec_utils import spec_lookup
 
-spec_lookup = {
-    "cpu": cpu_specs,
-    "gpu": gpu_specs,
-    "mobo": mobo_specs,
-    "psu": psu_specs,
-    "ram": ram_specs,
-    "pc_case": case_specs,
-    "mouse": mouse_specs,
-    "keyboard": keyboard_specs,
-    "monitor": monitor_specs,
-    "headset": headset_specs,
-    "m2": m2_specs,
-    "hdd": hdd_specs,
-    "sata_ssd": sata_ssd_specs,
-    "mouse_pad": mouse_pad_specs,
-}
-
-def add_part(part_type: str):
+def add_part(part_type: str) -> None:
     part_type = part_type.lower()
     
     if part_type not in spec_lookup:
@@ -52,4 +35,4 @@ def add_part(part_type: str):
             unique_key = f"{part_data['brand']} {part_data['model']}" if part_type == "gpu" else f"{part_data['manufacturer']} {part_data['model']}"
             print(f"{unique_key} already exists.")
         except Exception as e:
-            print(f"Unexpected error: {e}")
+            print(f"Unexpected Error: {e}")

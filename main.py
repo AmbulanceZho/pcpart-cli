@@ -1,7 +1,7 @@
 import input_utils, database_utils
 from spec_utils import table_specs
 
-def main():
+def main() -> None:
     run = True
     while run:
         try:
@@ -23,14 +23,12 @@ def main():
             
             elif action == "exit":
                 run = False
-            
-            #elif action == "update": #updating old entries with NULL fields, if part_type table gets new columns
-                #pass
+                
             else: # handles user errors: typos/mis-inputs
-                print(f"\"{action}\" is invalid. try an available action")
+                print(f"| \"{action}\" | is invalid. try an available action")
         
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Unexpected Error: {e}")
 
 if __name__ == '__main__':
     database_utils.create_tables_if_not_exist(table_specs)

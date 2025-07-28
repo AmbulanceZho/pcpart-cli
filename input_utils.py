@@ -1,10 +1,10 @@
 import sqlite3
-from database_utils import get_database_path, database_connection, tables
+from database_utils import database_connection, get_database_path, tables
 from part_utils import add_part
 
 actions = ["enter", "read", "exit"]
 
-def get_part_type():
+def get_part_type() -> None:
     print("Parts: ")
     for part in tables:
         print(f" -> {part}")
@@ -12,12 +12,12 @@ def get_part_type():
     try:
         if part_type in tables:
             add_part(part_type)
-        else:
+        else: #user error handling typos
             print(f"{part_type} is not valid.")
     except sqlite3.Error as e:
-        print(f"sqlite3 Error: {e}")
+        print(f"Unexpected Sqlite3 Error: {e}")
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Unexpected Error: {e}")
 
 def read(part_type: str = "", part_name: str = "") -> None:
     with database_connection(get_database_path()) as database:
@@ -27,8 +27,8 @@ def read(part_type: str = "", part_name: str = "") -> None:
             return
 
         try:
-            cursor = database.execute(f"PRAGMA table_info({part_type});")
-            existing_columns = [row[1] for row in cursor.fetchall()]
+            database_cursor = database.execute(f"PRAGMA table_info({part_type});")
+            existing_columns = [row[1] for row in database_cursor.fetchall()]
             
             searchable_fields = [field for field in ["name", "model", "brand", "manufacturer"] if field in existing_columns]
 
@@ -40,14 +40,14 @@ def read(part_type: str = "", part_name: str = "") -> None:
             query = f"SELECT * FROM {part_type} WHERE {like_clauses}"
             params = tuple(f"%{part_name}%" for _ in searchable_fields)
             
-            cursor = database.execute(query, params)
-            results = cursor.fetchall()
+            database_cursor = database.execute(query, params)
+            results = database_cursor.fetchall()
 
             if not results:
                 print(f"No matching part found for: | \"{part_name}\" |.")
                 return
 
-            columns = [desc[0] for desc in cursor.description]
+            columns = [desc[0] for desc in database_cursor.description]
             for row in results:
                 print("─" * 40)
                 for col, val in zip(columns, row):
@@ -55,6 +55,6 @@ def read(part_type: str = "", part_name: str = "") -> None:
                 print("─" * 40)
 
         except sqlite3.Error as e:
-            print(f"SQLite error: {e}")
+            print(f"Unexpected Sqlite error: {e}")
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Unexpected Error: {e}")

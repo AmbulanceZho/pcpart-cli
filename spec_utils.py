@@ -1,4 +1,4 @@
-# for executing sql queries without setting each field as a argument for a function.
+# expandable lists to insert more columns into respected table within database
 cpu_specs = [
     "name",
     "manufacturer",
@@ -244,4 +244,21 @@ table_specs = {
     "hdd": {spec: "TEXT" for spec in hdd_specs},
     "sata_ssd": {spec: "TEXT" for spec in sata_ssd_specs},
     "mouse_pad": {spec: "TEXT" for spec in mouse_pad_specs}
+}
+
+spec_lookup = {
+    "cpu": cpu_specs,
+    "gpu": gpu_specs,
+    "mobo": mobo_specs,
+    "psu": psu_specs,
+    "ram": ram_specs,
+    "pc_case": case_specs,
+    "mouse": mouse_specs,
+    "keyboard": keyboard_specs,
+    "monitor": monitor_specs,
+    "headset": headset_specs,
+    "m2": m2_specs,
+    "hdd": hdd_specs,
+    "sata_ssd": sata_ssd_specs,
+    "mouse_pad": mouse_pad_specs,
 }
