@@ -1,5 +1,5 @@
 import input_utils, database_utils
-from database_extension import table_specs
+from spec_utils import table_specs
 
 def main():
     run = True

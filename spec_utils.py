@@ -227,3 +227,20 @@ mouse_pad_specs = [
     "thickness",
     "anti_slip_base"
 ]
+
+table_specs = {
+    "cpu": {spec: "TEXT" for spec in cpu_specs},
+    "gpu": {spec: "TEXT" for spec in gpu_specs},
+    "mobo": {spec: "TEXT" for spec in mobo_specs},
+    "psu": {spec: "TEXT" for spec in psu_specs},
+    "ram": {spec: "TEXT" for spec in ram_specs},
+    "pc_case": {spec: "TEXT" for spec in case_specs},
+    "mouse": {spec: "TEXT" for spec in mouse_specs},
+    "keyboard": {spec: "TEXT" for spec in keyboard_specs},
+    "monitor": {spec: "TEXT" for spec in monitor_specs},
+    "headset": {spec: "TEXT" for spec in headset_specs},
+    "m2": {spec: "TEXT" for spec in m2_specs},
+    "hdd": {spec: "TEXT" for spec in hdd_specs},
+    "sata_ssd": {spec: "TEXT" for spec in sata_ssd_specs},
+    "mouse_pad": {spec: "TEXT" for spec in mouse_pad_specs}
+}

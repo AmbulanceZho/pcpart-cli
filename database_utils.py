@@ -29,20 +29,30 @@ def database_connection(database_path: str) -> sqlite3.Connection:
         connection.close()
 
 def create_tables_if_not_exist(table_specs: dict) -> None:
-        with database_connection(get_database_path()) as db:
-            try:
-                cursor = db.cursor()
-                for table, columns in table_specs.items():
-                    clean_columns = [col for col in columns if col]
-                    sql_columns = ", ".join([f"{col} TEXT" for col in clean_columns])
-                    sql = f"""
-                    CREATE TABLE IF NOT EXISTS {table} (
-                        model TEXT PRIMARY KEY,
-                        {sql_columns}
-                    );
-                """
-                    cursor.execute(sql)
-                    print(sql)
-                db.commit()
-            except Exception as e:
-                print(f"Error: {e}")
+    with database_connection(get_database_path()) as db:
+        try:
+            cursor = db.cursor()
+            for table, columns in table_specs.items():
+                unique_columns = list(dict.fromkeys(columns))
+                sql_fields = []
+
+                for col in unique_columns:
+                    sql_fields.append(f"{col} TEXT")
+                    
+                constraints = ""
+                if "brand" in unique_columns and "model" in unique_columns:
+                    constraints = ", UNIQUE(brand, model)"
+                elif "manufacturer" in unique_columns and "model" in unique_columns:
+                    constraints = ", UNIQUE(manufacturer, model)"
+
+                sql = f"""
+                CREATE TABLE IF NOT EXISTS {table} (
+                    {", ".join(sql_fields)}{constraints}
+                );
+                """.strip()
+
+                cursor.execute(sql)
+                print(sql)
+            db.commit()
+        except Exception as e:
+            print(f"Error: {e}")
