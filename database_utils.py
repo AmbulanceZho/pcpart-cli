@@ -29,9 +29,9 @@ def database_connection(database_path: str) -> sqlite3.Connection:
         connection.close()
 
 def create_tables_if_not_exist(table_specs: dict) -> None:
-    with database_connection(get_database_path()) as db:
+    with database_connection(get_database_path()) as database:
         try:
-            cursor = db.cursor()
+            database_cursor = database.cursor()
             for table, columns in table_specs.items():
                 unique_columns = list(dict.fromkeys(columns))
                 sql_fields = []
@@ -51,8 +51,8 @@ def create_tables_if_not_exist(table_specs: dict) -> None:
                 );
                 """.strip()
 
-                cursor.execute(sql)
+                database_cursor.execute(sql)
                 print(sql)
-            db.commit()
+            database.commit()
         except Exception as e:
             print(f"Error: {e}")

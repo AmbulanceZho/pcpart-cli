@@ -19,6 +19,7 @@ cpu_specs = [
     "pcie_version",
     "max_pcie_lanes",
     "release_date"
+    #"test_field" <- future implementation of a dynamic function which adds new columns to the database table with ease, without causing data loss
 ]
 
 

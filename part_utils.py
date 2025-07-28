@@ -1,4 +1,4 @@
-import database_utils, sqlite3
+import sqlite3
 from database_utils import get_database_path, database_connection
 from spec_utils import *
 
@@ -39,11 +39,11 @@ def add_part(part_type: str):
 
     sql = f"INSERT INTO {part_type} ({columns}) VALUES ({placeholders})"
 
-    with database_connection(get_database_path()) as db:
+    with database_connection(get_database_path()) as database:
         try:
-            cursor = db.cursor()
-            cursor.execute(sql, values)
-            db.commit()
+            database_cursor = database.cursor()
+            database_cursor.execute(sql, values)
+            database.commit()
             print("Success! Added:")
             for k, v in part_data.items():
                 print(f"| {k} | {v} |")
