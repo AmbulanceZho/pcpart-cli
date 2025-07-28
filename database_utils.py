@@ -41,9 +41,9 @@ def create_tables_if_not_exist(table_specs: dict) -> None:
                     
                 constraints = ""
                 if "brand" in unique_columns and "model" in unique_columns:
-                    constraints = ", UNIQUE(brand, model)"
+                    constraints = ", UNIQUE(brand, model)" # constraint for gpus, to allow multiple Nvidia GTX/RTX series gpus from AIB partners. 
                 elif "manufacturer" in unique_columns and "model" in unique_columns:
-                    constraints = ", UNIQUE(manufacturer, model)"
+                    constraints = ", UNIQUE(manufacturer, model)" # constraints for everything else.
 
                 sql = f"""
                 CREATE TABLE IF NOT EXISTS {table} (

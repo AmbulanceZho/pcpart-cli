@@ -2,52 +2,54 @@ import database_utils, sqlite3
 from database_utils import get_database_path, database_connection
 from spec_utils import *
 
-part_types = database_utils.tables
+spec_lookup = {
+    "cpu": cpu_specs,
+    "gpu": gpu_specs,
+    "mobo": mobo_specs,
+    "psu": psu_specs,
+    "ram": ram_specs,
+    "pc_case": case_specs,
+    "mouse": mouse_specs,
+    "keyboard": keyboard_specs,
+    "monitor": monitor_specs,
+    "headset": headset_specs,
+    "m2": m2_specs,
+    "hdd": hdd_specs,
+    "sata_ssd": sata_ssd_specs,
+    "mouse_pad": mouse_pad_specs,
+}
 
-def cpu():   
-    with database_connection(get_database_path()) as database:
-        cpuspecs = {}
-        for spec in cpu_specs:
-            get_spec = input(f"Enter spec for {spec}: ")
-            cpuspecs[spec] = get_spec
-        
-        columns = ", ".join(cpuspecs.keys())
-        place_holders = ", ".join("?" for _ in cpuspecs)
-        values = tuple(cpuspecs.values())
-        
-        sql = f"INSERT INTO cpu ({columns}) VALUES ({place_holders})"
-        try:
-            database_cursor = database.cursor()
-            database_cursor.execute(sql, values)
-            database.commit()
-            print(f"Success! Added: ")
-            for key, value in cpuspecs.items():
-                print(f"| {key} | {value} |")
-            print("to the data base.")
-        except sqlite3.IntegrityError:
-            print(f"{cpuspecs['name']} already exists.")
+def add_part(part_type: str):
+    part_type = part_type.lower()
     
-def gpu():
-    with database_connection(get_database_path()) as database:
-        gpuspecs = {}
-        for spec in gpu_specs:
-            get_spec = input(f"Enter spec for {spec}: ")
-            gpuspecs[spec] = get_spec
-        
-        columns = ", ".join(gpuspecs.keys())
-        place_holders = ", ".join("?" for _ in gpuspecs)
-        values = tuple(gpuspecs.values())
-        
-        sql = f"INSERT INTO gpu ({columns}) VALUES ({place_holders})"
-        try:
-            database_cursor = database.cursor()
-            database_cursor.execute(sql, values)
-            database.commit()
-            print(f"Success! Added: ")
-            for key, value in gpuspecs.items():
-                print(f"| {key} | {value} |")
-            print("to the data base.")
-        except sqlite3.IntegrityError:
-            print(f"{gpuspecs['name']} already exists.")
+    if part_type not in spec_lookup:
+        print(f"Part type '{part_type}' is not supported.")
+        return
 
-# implement rest of commands later.
+    specs = spec_lookup[part_type]
+
+    part_data = {}
+    for spec in specs:
+        value = input(f"Enter spec for {spec}: ")
+        part_data[spec] = value
+
+    columns = ", ".join(part_data.keys())
+    placeholders = ", ".join("?" for _ in part_data)
+    values = tuple(part_data.values())
+
+    sql = f"INSERT INTO {part_type} ({columns}) VALUES ({placeholders})"
+
+    with database_connection(get_database_path()) as db:
+        try:
+            cursor = db.cursor()
+            cursor.execute(sql, values)
+            db.commit()
+            print("Success! Added:")
+            for k, v in part_data.items():
+                print(f"| {k} | {v} |")
+            print("to the database.")
+        except sqlite3.IntegrityError:
+            unique_key = f"{part_data['brand']} {part_data['model']}" if part_type == "gpu" else f"{part_data['manufacturer']} {part_data['model']}"
+            print(f"{unique_key} already exists.")
+        except Exception as e:
+            print(f"Unexpected error: {e}")
