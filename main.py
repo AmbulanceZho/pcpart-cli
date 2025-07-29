@@ -25,7 +25,7 @@ def main() -> None:
                 run = False
                 
             else: # handles user errors: typos/mis-inputs
-                print(f"| \"{action}\" | is invalid. try an available action")
+                print(f"\"{action}\" is invalid. try an available action")
         
         except Exception as e:
             print(f"Unexpected Error: {e}")

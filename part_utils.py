@@ -2,7 +2,7 @@ import sqlite3
 from database_utils import get_database_path, database_connection
 from spec_utils import spec_lookup
 
-def add_part(part_type: str) -> None:
+def add_part(part_type: str = None) -> None:
     part_type = part_type.lower()
     
     if part_type not in spec_lookup:

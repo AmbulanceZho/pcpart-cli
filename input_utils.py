@@ -23,7 +23,7 @@ def read(part_type: str = "", part_name: str = "") -> None:
     with database_connection(get_database_path()) as database:
         
         if part_type not in tables:
-            print(f"Part | \"{part_type}\" | is invalid.")
+            print(f"\"{part_type}\" is a invalid part type.")
             return
 
         try:
@@ -44,15 +44,15 @@ def read(part_type: str = "", part_name: str = "") -> None:
             results = database_cursor.fetchall()
 
             if not results:
-                print(f"No matching part found for: | \"{part_name}\" |.")
+                print(f"No matching part found for: \"{part_name}\".")
                 return
 
             columns = [desc[0] for desc in database_cursor.description]
             for row in results:
-                print("─" * 40)
+                print("─" * 60)
                 for col, val in zip(columns, row):
                     print(f"{col:<15}: {val}")
-                print("─" * 40)
+                print("─" * 60)
 
         except sqlite3.Error as e:
             print(f"Unexpected Sqlite error: {e}")
